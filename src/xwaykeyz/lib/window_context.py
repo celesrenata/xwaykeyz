@@ -468,12 +468,13 @@ class Wl_Hyprland_WindowContext(WindowContextProviderInterface):
         """Utility function to open Hyprland IPC socket"""
         try:
             HIS = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
+            XDG = os.environ['XDG_RUNTIME_DIR']
         except KeyError as key_err:
-            raise EnvironmentError('HYPRLAND_INSTANCE_SIGNATURE is not set. KeyError resulted.')
-        if HIS is None:
-            raise EnvironmentError('HYPRLAND_INSTANCE_SIGNATURE is not set.')
+            raise EnvironmentError('HYPRLAND_INSTANCE_SIGNATURE or XDG_RUNTIME_DIR are not set. KeyError resulted.')
+        if (HIS is None) or (XDG is None):
+            raise EnvironmentError('HYPRLAND_INSTANCE_SIGNATURE or XDG_RUNTIME_dir are not set.')
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.sock.connect(f"/tmp/hypr/{HIS}/.socket.sock")
+        self.sock.connect(f"{XDG}/hypr/{HIS}/.socket.sock")
 
     def get_active_wdw_ctx_hypr_ipc(self):
         """Get Hyprland window context using IPC socket (faster than shell commands)."""
